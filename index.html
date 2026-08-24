@@ -10,8 +10,8 @@
   if (window.top !== window.self) {
     window.top.location = "https://soosooland.com";
   }
-    if (window.innerWidth < 580) {
-    window.location.href = 'https://soosooland.com/wordminemini/';
+    if (window.innerWidth < 650) {
+    window.location.href = 'https://soosooland.com/wordmine/';
   }
   console.log("© 2025-2026 Soosooland by 한수수. All rights reserved.");
   console.log("https://soosooland.com");
@@ -32,7 +32,7 @@
 <meta name="author" content="Soosooland">
 <!-- Open Graph -->
 
-<meta property="og:title" content="WordMine large - Word Search Puzzle Game">
+<meta property="og:title" content="Wordmine large - Word Search Puzzle Game">
 <meta property="og:description" content="A game where you find hidden words in a large grid using number hints. 큰 격자 속에 숨은 단어를 숫자 힌트로 찾는 게임">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://soosooland.com/wordminelarge/">
@@ -40,7 +40,7 @@
 <meta property="og:site_name" content="Soosooland">
 
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="워드마인 라지(WordMine large)">
+<meta name="twitter:title" content="워드마인 라지(Wordmine large)">
 <meta name="twitter:description" content="A game where you find hidden words in a large grid using number hints. 큰 격자 속에 숨은 단어를 숫자 힌트로 찾는 게임">
 <meta name="twitter:image" content="https://soosooland.com/wordmine/wordmine.png">
   
@@ -236,29 +236,35 @@ display: none;
    <button class="back-button" onclick="location.href='https://soosooland.com/'" aria-label="수수랜드 홈으로">
    <img src="https://soosooland.com/images/home.png" alt="수수랜드 홈"></button>
    <div class="language-toggle">
-                <button class="language-button active" onclick="toggleLanguage('ko')">한</button>
-                <button class="language-button" onclick="toggleLanguage('en')">EN</button>
-            </div><br>
-  <h1>WordMine  </h1>
-  <div class="description">
-   <div id="korean-description">
-    이 게임은 지뢰찾기를 개조한 워드서치 게임입니다.<br>
-    격자가 영어는 가로12*세로12이고,  한글은 가로10*세로10가  있는 중간사이즈입니다.<br>
+  <button class="language-button" onclick="toggleLanguage('ko')">한</button>
+  <button class="language-button" onclick="toggleLanguage('en')">EN</button>
+</div>
+
+<h1 class="lang-ko">워드마인 라지</h1>
+<h1 class="lang-en">Wordmine large</h1>
+ 
+<div class="description">
+  <div id="korean-description" class="lang-ko">
+        이 게임은 지뢰찾기를 개조한 워드서치 게임입니다.<br>
+    영어는 가로14*세로14,  한글은 가로12*세로12가  있는 큰  걱자입니다.<br>
     단어는 가로, 세로, 대각선 방향으로 숨겨져 있으며, 마지막 글자를 열면 해당 단어를 획득합니다.<br>
     NPC보다 많은 단어를 찾으면 이깁니다.<br>
     격자에 적힌 숫자는 격자 주변에 있는 글자의 수입니다.<br>
     숫자 힌트를 이용해서 숨겨진 단어를 찾으세요.<br>
     아래에서 원하는 워드풀을 선택해 게임을 시작하세요.<br>
-   </div>
-   <div id="english-description" class="hidden">
+  </div>
+  <div id="english-description" class="lang-en">
     This is a word search with a minesweeper twist.<br>
-    The grid is medium-sized: 12×12 for English and 10×10 for Korean.<br>
+    The grid is large-sized: 14×14 for English and 12×12 for Korean.<br>
     Words are hidden horizontally, vertically, or diagonally, and you earn the word by revealing its final letter.<br>
     Your goal is to find more words than the computer.<br>
     The numbers in the grid show how many letters are adjacent to that cell.<br>
     Look at the number hints and click the grid to find the words.<br>
     Choose a word pool below to begin the game.</div>
- </div>
+  </div>
+</div>
+
+
        
   <div class="row-container">
     <div class="column">
@@ -295,25 +301,31 @@ display: none;
  <script>
 
 function toggleLanguage(lang) {
-        const koreanDesc = document.getElementById('korean-description');
-        const englishDesc = document.getElementById('english-description');
-        const buttons = document.querySelectorAll('.language-button');
-        
-        buttons.forEach(btn => btn.classList.remove('active'));
-        
-        if (lang === 'ko') {
-            koreanDesc.classList.remove('hidden');
-            englishDesc.classList.add('hidden');
-            buttons[0].classList.add('active');
-        } else {
-            koreanDesc.classList.add('hidden');
-            englishDesc.classList.remove('hidden');
-            buttons[1].classList.add('active');
-        }
+  document.querySelectorAll('.lang-ko').forEach(el => {
+    el.style.display = (lang === 'ko') ? '' : 'none';
+  });
+  document.querySelectorAll('.lang-en').forEach(el => {
+    el.style.display = (lang === 'en') ? '' : 'none';
+  });
+  document.querySelectorAll('.language-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`.language-button[onclick*="'${lang}'"]`).classList.add('active');
 
-localStorage.setItem('soosoo-lang', lang); 
+  // 사용자가 수동으로 고른 언어는 기억해두기
+  localStorage.setItem('preferredLang', lang);
+}
 
-    }
+// 페이지 로드시 자동 감지
+(function detectLanguage() {
+  const saved = localStorage.getItem('preferredLang');
+  if (saved) {
+    toggleLanguage(saved);
+    return;
+  }
+  const browserLang = navigator.language || navigator.userLanguage;
+  const lang = browserLang.startsWith('ko') ? 'ko' : 'en';
+  toggleLanguage(lang);
+})();
+
 function initLanguage() {
   const saved = localStorage.getItem('soosoo-lang');
   if (saved) {
