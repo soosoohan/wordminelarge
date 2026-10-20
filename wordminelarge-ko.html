@@ -647,22 +647,32 @@ function checkWords() {
 function checkGameEnd() {
   if (resultShown) return;
   const totalWords = Object.keys(wordMap).length;
-  const allFound = foundWords.size >= totalWords && totalWords > 0;
-  const failed = mistakes >= mistakeLimit;
-  if (!allFound && !failed) return;
+  if (!(foundWords.size >= totalWords && totalWords > 0)) return;
 
   resultShown = true;
-  const userWords = foundBy.user.length;
-  const resultText = allFound
-    ? `당신이 이겼습니다! 단어 ${totalWords}개 중에서 ${userWords}개를 찾았습니다.`
-    : `게임이 끝났습니다! 단어 ${totalWords}개 중에서 ${userWords}개를 찾았습니다.`;
+  if (npcTimeoutId) { clearTimeout(npcTimeoutId); npcTimeoutId = null; }
 
-  currentTurnEl.textContent = resultText;
+  const userWords = foundBy.user.length;
+  const npcWords = foundBy.npc.length;
+
+  let result, winner;
+  if (userWords > npcWords) {
+    result = 'win';
+    winner = '당신이 이겼습니다!';
+  } else if (npcWords > userWords) {
+    result = 'lose';
+    winner = 'NPC가 이겼습니다!';
+  } else {
+    result = 'draw';
+    winner = '무승부입니다!';
+  }
+
+  currentTurnEl.textContent = `게임 종료! ${winner} (나: ${userWords} / NPC: ${npcWords})`;
 
   showEndOverlay({
     lang: 'ko',
-    result: allFound ? 'win' : 'lose',
-    scoreText: `단어 ${totalWords}개 중 ${userWords}개 발견`,
+    result,
+    scoreText: `나: ${userWords} / NPC: ${npcWords}`,
     onRestart: () => location.reload()
   });
 }
